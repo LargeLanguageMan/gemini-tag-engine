@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: "AI tool using Gemini, that will help as a recommendation engine for data collection on any website.",
   openGraph: {
     images: [{
-      url: 'https://tag-scraper.aiprojectlabs.com/images/gemini.webp',
+      url: '/images/gemini.webp',
       width: 1200,
       height: 630,
       alt: 'ai-powered-app-gemini',
