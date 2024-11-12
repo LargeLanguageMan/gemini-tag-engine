@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Tag } from "lucide-react"
+import { Tag, Linkedin } from "lucide-react"
 
 interface Recommendation {
   element: string;
@@ -121,11 +121,21 @@ export default function WebsiteScraper() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="w-full bg-[#2D2D2D] text-white p-3 rounded-t-lg mb-8 font-mono flex items-center">
-        <span className="text-gray-300">$</span>
-        <span className="text-gray-300 ml-2">&gt;</span>
-        <span className="text-gray-300 ml-2">made by wes</span>
-        <span className={`ml-2 ${showCursor ? 'opacity-100' : 'opacity-0'} text-[#00FF00] transition-opacity duration-100`}>▋</span>
+      <div className="w-full bg-[#2D2D2D] text-white p-3 rounded-t-lg mb-8 font-mono flex items-center justify-between">
+        <div className="flex items-center">
+          <span className="text-gray-300">$</span>
+          <span className="text-gray-300 ml-2">&gt;</span>
+          <span className="text-gray-300 ml-2">made by wes</span>
+          <span className={`ml-2 ${showCursor ? 'opacity-100' : 'opacity-0'} text-[#00FF00] transition-opacity duration-100`}>▋</span>
+        </div>
+        <a 
+          href="https://www.linkedin.com/in/wesley-hucker/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-300 hover:text-white transition-colors duration-200"
+        >
+          <Linkedin className="w-5 h-5" />
+        </a>
       </div>
 
       <div className="text-center mb-12">
@@ -193,6 +203,18 @@ export default function WebsiteScraper() {
       ) : (
         <p className="text-gray-500">No recommendations available</p>
       )}
+
+      {/* Add this footer section */}
+      <div className="mt-12 text-center text-sm text-gray-500">
+        <a 
+          href="https://www.linkedin.com/in/wesley-hucker/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="hover:text-blue-600 transition-colors duration-200"
+        >
+          Connect with me on LinkedIn
+        </a>
+      </div>
     </div>
   )
 }
