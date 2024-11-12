@@ -41,7 +41,7 @@ export default function WebsiteScraper() {
         body: JSON.stringify({ url }),
       })
       gtag('event', 'input_url', {
-        'input_text': url,
+        'input_text_url': url,
       });
       if (!scraperResponse.ok) {
         throw new Error('Failed to scrape website')
