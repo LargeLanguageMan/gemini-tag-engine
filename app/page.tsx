@@ -94,9 +94,8 @@ export default function WebsiteScraper() {
         jsonString = jsonString.replace(/,(\s*[\]}])/g, '$1')
         
         try {
-          console.log('Cleaned JSON string:', jsonString)
+          
           recommendationsArray = JSON.parse(jsonString)
-          console.log('Parsed recommendations:', recommendationsArray)
         } catch (e) {
           console.error('Failed to parse recommendations JSON:', e)
         }
@@ -108,7 +107,7 @@ export default function WebsiteScraper() {
         reason: typeof rec?.reason === 'string' ? rec.reason : 'No reason provided'
       }))
 
-      console.log('Formatted recommendations:', formattedRecs)
+      //console.log('Formatted recommendations:', formattedRecs)
       setRecommendations(formattedRecs)
     } catch (error) {
       console.error('Error:', error)
