@@ -161,7 +161,7 @@ export default function WebsiteScraper() {
             className="flex-grow"
           />
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Scraping...' : 'Scrape Website'}
+            {isLoading ? 'Generating...' : 'Generate Insights'}
           </Button>
         </div>
       </form>
