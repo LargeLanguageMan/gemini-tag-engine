@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,20 @@ interface Recommendation {
   reason: string;
 }
 
+declare const gtag: Function;
+
 export default function WebsiteScraper() {
   const [url, setUrl] = useState('')
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showCursor, setShowCursor] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCursor(prev => !prev)
+    }, 530)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +40,9 @@ export default function WebsiteScraper() {
         },
         body: JSON.stringify({ url }),
       })
-      
+      gtag('event', 'input_url', {
+        'input_text': url,
+      });
       if (!scraperResponse.ok) {
         throw new Error('Failed to scrape website')
       }
@@ -102,12 +114,30 @@ export default function WebsiteScraper() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Website Scraper</h1>
+      <div className="w-full bg-[#2D2D2D] text-white p-3 rounded-t-lg mb-8 font-mono flex items-center">
+        <span className="text-gray-300">$</span>
+        <span className="text-gray-300 ml-2">&gt;</span>
+        <span className="text-gray-300 ml-2">made by wes</span>
+        <span className={`ml-2 ${showCursor ? 'opacity-100' : 'opacity-0'} text-[#00FF00] transition-opacity duration-100`}>▋</span>
+      </div>
+
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-blue-600 inline-block text-transparent bg-clip-text">
+          AI Tagging Insights for Websites
+        </h1>
+        <p className="text-lg text-gray-600">
+          Smart recommendations at your fingertips{' '}
+          <span className="text-blue-600 hover:underline transition-all duration-300">
+            Powered by Gemini
+          </span>
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
           <Input
             type="url"
-            placeholder="Enter website URL"
+            placeholder="Enter website URL. Include https://"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
