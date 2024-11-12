@@ -28,6 +28,13 @@ export default function WebsiteScraper() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Normalize the URL by adding https:// if it's missing
+    let normalizedUrl = url
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      normalizedUrl = `https://${url}`
+    }
+    
     setIsLoading(true)
     setRecommendations([])
 
@@ -38,10 +45,10 @@ export default function WebsiteScraper() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: normalizedUrl }),
       })
       gtag('event', 'input_url', {
-        'input_text_url': url,
+        'input_text_url': normalizedUrl,
       });
       if (!scraperResponse.ok) {
         throw new Error('Failed to scrape website')
@@ -136,8 +143,8 @@ export default function WebsiteScraper() {
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
           <Input
-            type="url"
-            placeholder="Enter website URL. Include https://"
+            type="text"
+            placeholder="Enter website URL (like, aiprojectlabs.com)"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required

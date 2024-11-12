@@ -59,6 +59,10 @@ export async function POST(req: NextRequest) {
               - **Objective**:
                 - Focus on elements that users can interact with, such as buttons, links, form fields, and interactive sections.
                 - Avoid non-interactive elements unless they contain important metadata or content relevant for tracking.
+
+              - ** classificaiton **:
+               - at the bottom of the output add a classifcication of what tag it would fall under, for example if its a button it should be Track Button in bold
+               if its a form it should be Track Form in bold.  
             
               - **Example Format**:
                 \`[{"element": "button", "reason": "Tracks user engagement"}, {"element": "form", "reason": "Captures user input"}]\`
