@@ -149,28 +149,39 @@ export default function WebsiteScraper() {
         </div>
       </form>
 
-      {/* Add debug element */}
+      {/* Update the debug element styling */}
       <div className="mb-4">
-        <p>Number of recommendations: {recommendations.length}</p>
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600/10 to-blue-600/10 border border-purple-600/20">
+          <span className="text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Number of recommendations: {recommendations.length}
+          </span>
+        </div>
       </div>
 
       {Array.isArray(recommendations) && recommendations.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {recommendations.map((rec, index) => {
-        return (
-          <Card key={index} className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Tag className="h-5 w-5" />
-                <span className="break-words">{rec.element}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="break-words">{rec.reason}</p>
-            </CardContent>
-          </Card>
-        );
-      })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recommendations.map((rec, index) => (
+            <Card 
+              key={index} 
+              className="group hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100"
+            >
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-600/10 to-blue-600/10">
+                    <Tag className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <span className="break-words font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    {rec.element}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="break-words text-gray-600 leading-relaxed">
+                  {rec.reason}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : (
         <p className="text-gray-500">No recommendations available</p>
