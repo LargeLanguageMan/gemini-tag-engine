@@ -36,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+      <meta name="image" property="og:image" content="/images/gemini.webp"></meta>
 
       <Script async src="https://www.googletagmanager.com/gtag/js?id=G-29H3KSNVGS"></Script>
         
