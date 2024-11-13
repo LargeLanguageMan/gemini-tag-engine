@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Initialize GoogleGenerativeAI with the secret API key
+    // Initialise GoogleGenerativeAI with the secret API key
     
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'failed');
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });

@@ -12,7 +12,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Fetch the webpage with additional headers to appear more like a browser
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -24,7 +23,6 @@ export async function POST(request: Request) {
     })
     const html = response.data
     const $ = cheerio.load(html)
-    // Initialize array to store interactive elements
     const interactiveElements: InteractiveElement[] = []
     interface InteractiveElement {
         type: 'button' | 'input' | 'select' | 'form' | 'link';
@@ -39,7 +37,7 @@ export async function POST(request: Request) {
         href?: string;
       }
 
-    // Find and analyze buttons
+
     $('button, input[type="button"], input[type="submit"]').each((_, element) => {
       interactiveElements.push({
         type: 'button',
@@ -49,7 +47,7 @@ export async function POST(request: Request) {
       })
     })
 
-    // Find and analyze input fields
+
     $('input[type="text"], input[type="search"], input[type="email"], input[type="password"]').each((_, element) => {
       interactiveElements.push({
         type: 'input',
@@ -60,7 +58,7 @@ export async function POST(request: Request) {
       })
     })
 
-    // Find and analyze select dropdowns
+
     $('select').each((_, element) => {
       const options = $(element).find('option').map((_, option) => $(option).text()).get()
       interactiveElements.push({
@@ -71,7 +69,7 @@ export async function POST(request: Request) {
       })
     })
 
-    // Find and analyze forms
+
     $('form').each((_, element) => {
       interactiveElements.push({
         type: 'form',
@@ -82,7 +80,7 @@ export async function POST(request: Request) {
       })
     })
 
-    // Find and analyze links
+  
     $('a').each((_, element) => {
       interactiveElements.push({
         type: 'link',

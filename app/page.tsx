@@ -81,11 +81,11 @@ export default function WebsiteScraper() {
       // Extract the JSON string from the text property and parse it
       let recommendationsArray = []
       if (response.text) {
-        // Clean up the JSON string first
+        // clean json
         let jsonString = response.text
-          .replace(/```json\n/, '')  // Remove opening ```json
-          .replace(/\n```$/, '')     // Remove closing ```
-          .trim()                    // Remove extra whitespace
+          .replace(/```json\n/, '') 
+          .replace(/\n```$/, '')     
+          .trim()                    
         
         // Find the last complete object (ending with "}") and add closing bracket
         const lastBraceIndex = jsonString.lastIndexOf('}')
