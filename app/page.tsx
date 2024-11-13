@@ -29,10 +29,13 @@ export default function WebsiteScraper() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Normalize the URL by adding https:// if it's missing
+  
     let normalizedUrl = url
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       normalizedUrl = `https://${url}`
+    }
+    else {
+      normalizedUrl = url
     }
     
     setIsLoading(true)
