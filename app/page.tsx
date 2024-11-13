@@ -34,10 +34,7 @@ export default function WebsiteScraper() {
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       normalizedUrl = `https://${url}`
     }
-    else {
-      normalizedUrl = url
-    }
-    
+    console.log('Normalized URL:', normalizedUrl)
     setIsLoading(true)
     setRecommendations([])
 
