@@ -1,6 +1,6 @@
 # AI Tagging Insights - Powered by Gemini
 
-![AI Tagging Insights](/images/screenshot.png)
+![AI Tagging Insights](/public/images/screenshot.png)
 
 ## 🚀 Overview
 
