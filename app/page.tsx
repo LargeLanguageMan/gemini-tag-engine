@@ -66,7 +66,7 @@ const ExpandableCard = ({ rec, index }: { rec: Recommendation, index: number }) 
             </code>
           </div>
           <p className="text-[10px] text-gray-400 mt-2">
-            Hint: Copy $$('{rec.selector_code}')[0].innerHTML to test the query selector in the console.
+            Hint: Use $$('{rec.selector_code}') to test the query selector in the console.
           </p>
         </DialogContent>
       </Dialog>
