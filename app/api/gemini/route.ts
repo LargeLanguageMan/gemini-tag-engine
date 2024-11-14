@@ -48,32 +48,44 @@ export async function POST(req: NextRequest) {
           role: 'user',
           parts: [
             {
-              "text": `You are provided with a JSON object representing elements on a webpage. Your task is to analyze the structure and identify interactive elements that could benefit from tagging. 
-            
-              - **Output Requirements**:
-                - Return a JSON array containing objects for each interactive element identified.
-                - Each object should include:
-                  - **"element"**: The element name or identifier (e.g., "button", "link", etc.), use capitilised first letter, and also be more specific for the title so if its a button it is Button - Log in/Log Out, etc
-                  - **"reason"**: A brief explanation of why the element should be tagged (e.g., "User engagement tracking", "Click-through measurement"). you need to give more details in this one, and be more specific.
-            
-              - **Objective**:
-                - Focus on elements that users can interact with, such as buttons, links, form fields, and interactive sections.
-                - Avoid non-interactive elements unless they contain important metadata or content relevant for tracking.
-                - please make sure to rank the elements and list them from top to bottom in order of priority, the most important ones first.
+              "text": `Here's a refined version of your AI prompt tailored to generate an array in the desired format:
 
-              - ** classificaiton **:
-               - at the bottom of the output add a classifcication of what tag it would fall under, for example if its a button it should be Track Button in bold
-               if its a form it should be Track Form in bold.  
-            
-              - **Example Format**:
-                \`[{"element": "button", "reason": "Tracks user engagement"}, {"element": "form", "reason": "Captures user input"}]\`
-            
-              **Input**: 
-                ${parsedInput}
-            
-              **Constraints**:
-              - Do not deviate from the specified output structure.
-              - Ensure that each element in the array is unique and provides a clear purpose for tagging.
+
+**Prompt**:
+
+You are provided with a JSON object representing elements on a webpage. Your task is to analyze the structure and identify interactive elements that would benefit from tagging.
+
+- **Output Requirements**:
+  - Return a JSON array containing objects for each identified interactive element.
+  - Each object in the array should include:
+    - **"element"**: The specific name or identifier of the element (e.g., "Button - Log in," "Link - Sign Up," "Form - Contact Us"), with a capitalized first letter and clear description of the action or label if available.
+    - **"reason"**: A detailed explanation of why the element should be tagged (e.g., "Enables user engagement tracking for key call-to-action" or "Records submission data for lead generation").
+    - **"selector_code"**: The query selector string (QSS) for the element.
+
+- **Objective**:
+  - Focus on user-interactive elements, such as buttons, links, form fields, and other clickable areas.
+  - Exclude non-interactive elements unless they contain critical metadata or content useful for tracking.
+  - Rank the elements in order of importance, listing the most significant elements first.
+
+- **Classification**:
+  - At the end of the output, add a classification for each element type:
+    - For a button, mark as **Track Button**.
+    - For a form, mark as **Track Form**.
+
+- **Example Format**:
+  json
+  [
+    {"element": "Button - Log In", "reason": "Tracks key user engagement on login action", "selector_code": "selector"},
+    {"element": "Form - Contact Us", "reason": "Captures user input for contact and follow-up", "selector_code": "selector"}
+  ]
+  
+
+**Input**:
+  ${parsedInput}
+
+**Constraints**:
+- Follow the specified output structure without deviation.
+- Ensure each element in the array has a unique purpose and offers a clear tagging rationale.
               `
             },
           ],

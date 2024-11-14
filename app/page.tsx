@@ -4,20 +4,79 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Tag, Linkedin } from "lucide-react"
+import { Tag, Linkedin, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 
 interface Recommendation {
   element: string;
   reason: string;
+  selector_code?: string;
 }
 
 declare const gtag: Function;
+
+const ExpandableCard = ({ rec, index }: { rec: Recommendation, index: number }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  return (
+    <>
+      <Card 
+        key={index} 
+        className="group hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 cursor-pointer"
+        onClick={() => setIsDialogOpen(true)}
+      >
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-600/10 to-blue-600/10">
+              <Tag className="h-5 w-5 text-purple-600" />
+            </div>
+            <span className="break-words font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              {rec.element}
+              
+            </span>
+          </CardTitle>
+          <span className="text-sm text-gray-500">Click to get CSS</span>
+        </CardHeader>
+        <CardContent>
+          <p className="break-words text-gray-600 leading-relaxed">
+            {rec.reason}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Query Selector
+            </DialogTitle>
+            <DialogDescription className="text-gray-500">
+              Use this CSS selector to target the element on your page.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <code className="text-sm text-gray-800 break-all font-mono">
+              {rec.selector_code || 'No selector available'}
+            </code>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
 
 export default function WebsiteScraper() {
   const [url, setUrl] = useState('')
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showCursor, setShowCursor] = useState(true)
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,11 +87,12 @@ export default function WebsiteScraper() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
     
-  
-    let normalizedUrl = url
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      normalizedUrl = `https://${url}`
+    // Trim whitespace from URL
+    let normalizedUrl = url.trim()
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = `https://${normalizedUrl}`
     }
     console.log('Normalized URL:', normalizedUrl)
     setIsLoading(true)
@@ -51,7 +111,7 @@ export default function WebsiteScraper() {
         'input_text_url': normalizedUrl,
       });
       if (!scraperResponse.ok) {
-        throw new Error('Failed to scrape website')
+        throw new Error('Failed to load website. Please check the URL and try again.')
       }
       
       const data = await scraperResponse.json()
@@ -102,21 +162,22 @@ export default function WebsiteScraper() {
       }
 
       // Format and validate each recommendation
-      const formattedRecs = recommendationsArray.map((rec: { element?: string; reason?: string }) => ({
+      const formattedRecs = recommendationsArray.map((rec: { element?: string; reason?: string; selector_code?: string }) => ({
         element: typeof rec?.element === 'string' ? rec.element : 'Unknown Element',
-        reason: typeof rec?.reason === 'string' ? rec.reason : 'No reason provided'
+        reason: typeof rec?.reason === 'string' ? rec.reason : 'No reason provided',
+        selector_code: typeof rec?.selector_code === 'string' ? rec.selector_code : undefined
       }))
 
       //console.log('Formatted recommendations:', formattedRecs)
       setRecommendations(formattedRecs)
     } catch (error) {
       console.error('Error:', error)
+      setError((error as Error).message)
       setRecommendations([])
     } finally {
       setIsLoading(false)
     }
   }
-
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -174,34 +235,18 @@ export default function WebsiteScraper() {
         </div>
       </div>
 
-      {Array.isArray(recommendations) && recommendations.length > 0 ? (
+      {error ? (
+        <div className="text-center p-8 rounded-lg border border-red-200 bg-red-50">
+          <p className="text-red-600 font-medium mb-2">Error</p>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      ) : Array.isArray(recommendations) && recommendations.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommendations.map((rec, index) => (
-            <Card 
-              key={index} 
-              className="group hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100"
-            >
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-600/10 to-blue-600/10">
-                    <Tag className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <span className="break-words font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                    {rec.element}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="break-words text-gray-600 leading-relaxed">
-                  {rec.reason}
-                </p>
-              </CardContent>
-            </Card>
+            <ExpandableCard key={index} rec={rec} index={index} />
           ))}
         </div>
-      ) : (
-        <p className="text-gray-500">No recommendations available</p>
-      )}
+      ) : null}
 
       {/* Add this footer section */}
       <div className="mt-12 text-center text-sm text-gray-500">

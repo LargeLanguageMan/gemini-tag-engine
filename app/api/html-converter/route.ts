@@ -35,15 +35,32 @@ export async function POST(request: Request) {
         action?: string;
         method?: string;
         href?: string;
-      }
+        selector: string;
+    }
 
+    // Helper function to get unique selector
+    const getSelector = (element: Element, $: cheerio.CheerioAPI): string => {
+        const el = $(element);
+        if (el.attr('id')) return `#${el.attr('id')}`;
+        
+        let selector = element.tagName;
+        const className = el.attr('class');
+        if (className) {
+            selector += '.' + className.replace(/\s+/g, '.');
+        }
+        
+
+        
+        return selector;
+    };
 
     $('button, input[type="button"], input[type="submit"]').each((_, element) => {
       interactiveElements.push({
         type: 'button',
         element: element.name,
         text: $(element).text().trim() || ($(element).val() as string) || 'Unnamed Button',
-        attributes: element.attribs
+        attributes: element.attribs,
+        selector: getSelector(element, $)
       })
     })
 
@@ -54,7 +71,8 @@ export async function POST(request: Request) {
         element: element.name,
         placeholder: element.attribs.placeholder || 'No placeholder',
         inputType: element.attribs.type,
-        attributes: element.attribs
+        attributes: element.attribs,
+        selector: getSelector(element, $)
       })
     })
 
@@ -65,7 +83,8 @@ export async function POST(request: Request) {
         type: 'select',
         element: element.name,
         options: options,
-        attributes: element.attribs
+        attributes: element.attribs,
+        selector: getSelector(element, $)
       })
     })
 
@@ -76,7 +95,8 @@ export async function POST(request: Request) {
         element: element.name,
         action: element.attribs.action || 'No action specified',
         method: element.attribs.method || 'get',
-        attributes: element.attribs
+        attributes: element.attribs,
+        selector: getSelector(element, $)
       })
     })
 
@@ -87,7 +107,8 @@ export async function POST(request: Request) {
         element: element.name,
         text: $(element).text().trim() || 'Unnamed Link',
         href: element.attribs.href || '#',
-        attributes: element.attribs
+        attributes: element.attribs,
+        selector: getSelector(element, $)
       })
     })
 
@@ -101,7 +122,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Failed to analyze page',
+        error: 'Failed to analyse page',
         details: error.message || 'Unknown error',
         status: error.response?.status
       },
