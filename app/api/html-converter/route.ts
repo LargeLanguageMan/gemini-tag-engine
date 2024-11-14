@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     // Helper function to get unique selector
-    const getSelector = (element: Element, $: cheerio.CheerioAPI): string => {
+    const getSelector = (element: cheerio.Element, $: cheerio.CheerioAPI): string => {
         const el = $(element);
         if (el.attr('id')) return `#${el.attr('id')}`;
         
@@ -48,8 +48,6 @@ export async function POST(request: Request) {
         if (className) {
             selector += '.' + className.replace(/\s+/g, '.');
         }
-        
-
         
         return selector;
     };
