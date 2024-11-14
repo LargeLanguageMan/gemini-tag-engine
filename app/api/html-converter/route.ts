@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import * as cheerio from 'cheerio'
 import axios from 'axios'
+import type { CheerioAPI } from 'cheerio'
+import type { AnyNode } from 'domhandler'
 
 export async function POST(request: Request) {
   try {
@@ -39,11 +41,11 @@ export async function POST(request: Request) {
     }
 
     // Helper function to get unique selector
-    const getSelector = (element: cheerio.Element, $: cheerio.CheerioAPI): string => {
+    const getSelector = (element: AnyNode, $: CheerioAPI): string => {
         const el = $(element);
         if (el.attr('id')) return `#${el.attr('id')}`;
         
-        let selector = element.tagName;
+        let selector = (element as any).tagName;
         const className = el.attr('class');
         if (className) {
             selector += '.' + className.replace(/\s+/g, '.');
