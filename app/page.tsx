@@ -12,6 +12,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 
 interface Recommendation {
   element: string;
@@ -76,6 +78,7 @@ const ExpandableCard = ({ rec, index }: { rec: Recommendation, index: number }) 
 
 export default function WebsiteScraper() {
   const [url, setUrl] = useState('')
+  const [useFlash, setUseFlash] = useState(false)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showCursor, setShowCursor] = useState(true)
@@ -87,6 +90,21 @@ export default function WebsiteScraper() {
     }, 530)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    gtag('event', 'model_preference', {
+      'model_type': useFlash ? 'flash' : 'pro',
+      'initial_selection': true
+    });
+  }, []);
+
+  const handleModelToggle = (checked: boolean) => {
+    setUseFlash(checked);
+    gtag('event', 'model_preference', {
+      'model_type': checked ? 'flash' : 'pro',
+      'user_toggled': true
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -128,7 +146,8 @@ export default function WebsiteScraper() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          input: data 
+          input: data,
+          useFlash: useFlash 
         }),
       })
 
@@ -214,18 +233,34 @@ export default function WebsiteScraper() {
       </div>
 
       <form onSubmit={handleSubmit} className="mb-8">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Input
-            type="text"
-            placeholder="Enter website URL (like, aiprojectlabs.com)"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            required
-            className="flex-grow"
-          />
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Generating...' : 'Generate Insights'}
-          </Button>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Input
+              type="text"
+              placeholder="Enter website URL (like, aiprojectlabs.com)"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              required
+              className="flex-grow"
+            />
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Generating...' : 'Generate Insights'}
+            </Button>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="model-toggle"
+              checked={useFlash}
+              onCheckedChange={handleModelToggle}
+            />
+            <Label 
+              htmlFor="model-toggle" 
+              className="text-sm font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+            >
+              {useFlash ? 'Using Fast Mode (Gemini Flash)' : 'Using Detailed Mode (Gemini Pro)'}
+            </Label>
+          </div>
         </div>
       </form>
 

@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if input exists
+    // Check if input exists and model preference
     if (!body.input) {
       return NextResponse.json(
         { error: 'Missing required field: input' },
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { input } = body;
+    const { input, useFlash = false } = body;
 
     // Ensure input is a valid JSON string
     let parsedInput;
@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
     // Initialise GoogleGenerativeAI with the secret API key
     
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'failed');
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const modelName = useFlash ? 'gemini-1.5-flash' : 'gemini-1.5-pro';
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     const result = await model.generateContent({
       contents: [
@@ -59,7 +60,7 @@ You are provided with a JSON object representing elements on a webpage. Your tas
   - Return a JSON array containing objects for each identified interactive element.
   - Each object in the array should include:
     - **"element"**: The specific name or identifier of the element (e.g., "Button - Log in," "Link - Sign Up," "Form - Contact Us"), with a capitalized first letter and clear description of the action or label if available.
-    - **"reason"**: A detailed explanation of why the element should be tagged (e.g., "Enables user engagement tracking for key call-to-action" or "Records submission data for lead generation").
+    - **"reason"**: A detailed explanation of why the element should be tagged (e.g., "Enables user engagement tracking for key call-to-action" or "Records submission data for lead generation"). be more descriptive, how this will help their analytics tracking.
     - **"selector_code"**: The query selector string (QSS) for the element.
 
 - **Objective**:
