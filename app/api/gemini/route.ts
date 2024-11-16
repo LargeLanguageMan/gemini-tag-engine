@@ -2,6 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Add runtime configuration for Edge
+export const runtime = 'edge';
+
 export async function POST(req: NextRequest) {
   try {
     // Validate the request body
@@ -38,7 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Initialise GoogleGenerativeAI with the secret API key
-    
+
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'failed');
     const modelName = useFlash ? 'gemini-1.5-flash' : 'gemini-1.5-pro';
     const model = genAI.getGenerativeModel({ model: modelName });
@@ -49,11 +52,7 @@ export async function POST(req: NextRequest) {
           role: 'user',
           parts: [
             {
-              "text": `Here's a refined version of your AI prompt tailored to generate an array in the desired format:
-
-
-**Prompt**:
-
+              "text": `
 You are provided with a JSON object representing elements on a webpage. Your task is to analyze the structure and identify interactive elements that would benefit from tagging.
 
 - **Output Requirements**:
@@ -95,16 +94,30 @@ You are provided with a JSON object representing elements on a webpage. Your tas
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 1,
+        
       },
     });
 
-    // Retrieve the generated text from the result
+    // Get the response text
     const text = await result.response.text();
-
-    // Return the generated text as a JSON response
-    return NextResponse.json({ text });
+    
+    // Return response using Edge-compatible NextResponse
+    return new NextResponse(JSON.stringify({ text }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Error generating content:', error);
-    return NextResponse.json({ error: 'Error generating content' }, { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: 'Error generating content' }), 
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 }
