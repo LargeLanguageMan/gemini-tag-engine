@@ -28,8 +28,8 @@ const ExpandableCard = ({ rec, index }: { rec: Recommendation, index: number }) 
 
   return (
     <>
-      <Card 
-        key={index} 
+      <Card
+        key={index}
         className="group hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 cursor-pointer"
         onClick={() => setIsDialogOpen(true)}
       >
@@ -40,7 +40,7 @@ const ExpandableCard = ({ rec, index }: { rec: Recommendation, index: number }) 
             </div>
             <span className="break-words font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               {rec.element}
-              
+
             </span>
           </CardTitle>
           <span className="text-sm text-gray-500">Click to get CSS</span>
@@ -106,10 +106,11 @@ export default function WebsiteScraper() {
     });
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    
+
     // Trim whitespace from URL
     let normalizedUrl = url.trim()
     if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
@@ -134,20 +135,22 @@ export default function WebsiteScraper() {
       if (!scraperResponse.ok) {
         throw new Error('Failed to load website. Please check the URL and try again.')
       }
-      
+      //if scraper response is empty try agai
+
       const data = await scraperResponse.json()
-      console.log('Full scraper response:', data)
-    
-      
-      // Then, get recommendations using Gemini
+
+
+
+
+
       const geminiResponse = await fetch('/api/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           input: data,
-          useFlash: useFlash 
+          useFlash: useFlash
         }),
       })
 
@@ -156,27 +159,27 @@ export default function WebsiteScraper() {
       }
 
       const response = await geminiResponse.json()
-      
+
       // Extract the JSON string from the text property and parse it
       let recommendationsArray = []
       if (response.text) {
         // clean json
         let jsonString = response.text
-          .replace(/```json\n/, '') 
-          .replace(/\n```$/, '')     
-          .trim()                    
-        
+          .replace(/```json\n/, '')
+          .replace(/\n```$/, '')
+          .trim()
+
         // Find the last complete object (ending with "}") and add closing bracket
         const lastBraceIndex = jsonString.lastIndexOf('}')
         if (lastBraceIndex !== -1) {
           jsonString = jsonString.substring(0, lastBraceIndex + 1) + ']'
         }
-        
+
         // Remove trailing comma if present
         jsonString = jsonString.replace(/,(\s*[\]}])/g, '$1')
-        
+
         try {
-          
+
           recommendationsArray = JSON.parse(jsonString)
         } catch (e) {
           console.error('Failed to parse recommendations JSON:', e)
@@ -210,7 +213,7 @@ export default function WebsiteScraper() {
           <span className="text-gray-300 ml-2">made by wes</span>
           <span className={`ml-2 ${showCursor ? 'opacity-100' : 'opacity-0'} text-[#00FF00] transition-opacity duration-100`}>▋</span>
         </div>
-        <a 
+        <a
           href="https://www.linkedin.com/in/wesley-hucker/"
           target="_blank"
           rel="noopener noreferrer"
@@ -247,15 +250,15 @@ export default function WebsiteScraper() {
               {isLoading ? 'Generating...' : 'Generate Insights'}
             </Button>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Switch
               id="model-toggle"
               checked={useFlash}
               onCheckedChange={handleModelToggle}
             />
-            <Label 
-              htmlFor="model-toggle" 
+            <Label
+              htmlFor="model-toggle"
               className="text-sm font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
             >
               {useFlash ? 'Using Fast Mode (Gemini Flash)' : 'Using Detailed Mode (Gemini Pro)'}
@@ -288,9 +291,9 @@ export default function WebsiteScraper() {
 
       {/* Add this footer section */}
       <div className="mt-12 text-center text-sm text-gray-500">
-        <a 
-          href="https://www.linkedin.com/in/wesley-hucker/" 
-          target="_blank" 
+        <a
+          href="https://www.linkedin.com/in/wesley-hucker/"
+          target="_blank"
           rel="noopener noreferrer"
           className="hover:text-blue-600 transition-colors duration-200"
         >

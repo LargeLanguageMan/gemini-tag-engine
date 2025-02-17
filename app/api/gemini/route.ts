@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     // Initialise GoogleGenerativeAI with the secret API key
 
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'failed');
-    const modelName = useFlash ? 'gemini-1.5-flash' : 'gemini-1.5-pro';
+    const modelName = useFlash ? 'gemini-2.0-flash' : 'gemini-2.0-flash'; // right now flash and pro are the same =) dont question it
     const model = genAI.getGenerativeModel({ model: modelName });
 
     const result = await model.generateContent({
@@ -94,13 +94,13 @@ You are provided with a JSON object representing elements on a webpage. Your tas
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 1,
-        
+
       },
     });
 
     // Get the response text
     const text = await result.response.text();
-    
+
     // Return response using Edge-compatible NextResponse
     return new NextResponse(JSON.stringify({ text }), {
       status: 200,
@@ -111,8 +111,8 @@ You are provided with a JSON object representing elements on a webpage. Your tas
   } catch (error) {
     console.error('Error generating content:', error);
     return new NextResponse(
-      JSON.stringify({ error: 'Error generating content' }), 
-      { 
+      JSON.stringify({ error: 'Error generating content' }),
+      {
         status: 500,
         headers: {
           'Content-Type': 'application/json',
